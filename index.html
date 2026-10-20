@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Món quà bí mật ngày 20/11 dành riêng cho cô gái anh thương nhất - Hộp quà 3D, thư tình ngọt ngào và hiệu ứng lung linh">
+  <meta name="theme-color" content="#FFD6E7">
+  <title>Món Quà Bí Mật Dành Riêng Cho Em 💗 | 20/11</title>
+
+  <!-- Google Fonts: Dancing Script (viết tay lãng mạn), Quicksand (nội dung thanh thoát, hỗ trợ tiếng Việt) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Canvas hạt ánh sáng, hoa rơi, bong bóng và pháo hoa giấy -->
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+
+  <!-- Nút điều khiển âm nhạc góc phải trên -->
+  <header class="top-bar">
+    <div class="music-controller">
+      <button id="music-toggle-btn" class="icon-btn" aria-label="Bật/Tắt nhạc nền" title="Bật hoặc tắt nhạc nền lãng mạn">
+        <span class="music-icon" id="music-icon">🎵</span>
+        <span class="music-text" id="music-text">Bật nhạc</span>
+        <div class="music-waves" id="music-waves" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hoa trang trí 4 góc -->
+  <div class="corner-flower top-left" aria-hidden="true">🌸</div>
+  <div class="corner-flower top-right" aria-hidden="true">🌷</div>
+  <div class="corner-flower bottom-left" aria-hidden="true">🌹</div>
+  <div class="corner-flower bottom-right" aria-hidden="true">🌸</div>
+
+  <!-- Toast thông báo tương tác -->
+  <div id="toast-message" class="toast-message" role="alert" aria-live="polite"></div>
+
+  <!-- ==================== MÀN HÌNH 1: NHẬP PASSCODE BÍ MẬT ==================== -->
+  <section id="passcode-screen" class="screen-section active" aria-label="Màn hình nhập mật mã bí mật">
+    <div class="glass-card passcode-card">
+      <div class="card-badge" id="passcode-badge">Dành tặng cô gái anh thương nhất, nhân ngày 20/11 🌷</div>
+      
+      <h1 class="main-title" id="main-title">
+        <span class="gift-icon">🎁</span> MÓN QUÀ BÍ MẬT DÀNH RIÊNG CHO EM <span class="gift-icon">🎁</span>
+      </h1>
+      
+      <p class="subtitle" id="main-subtitle">
+        Có một món quà nhỏ đang chờ cô gái đặc biệt nhất của anh mở ra... 💗
+      </p>
+
+      <div class="passcode-prompt-wrapper">
+        <p class="prompt-text" id="passcode-prompt">
+          Em có nhớ mật mã bí mật của chúng mình không? 🥰
+        </p>
+        
+        <!-- 4 ô mật mã hiển thị viên thuốc / hình tròn -->
+        <div class="passcode-dots-container" id="passcode-dots" aria-label="4 ký tự mật mã">
+          <div class="passcode-dot" data-index="0"></div>
+          <div class="passcode-dot" data-index="1"></div>
+          <div class="passcode-dot" data-index="2"></div>
+          <div class="passcode-dot" data-index="3"></div>
+        </div>
+
+        <!-- Thông báo kết quả kiểm tra passcode -->
+        <p id="passcode-feedback" class="feedback-text" aria-live="polite"></p>
+      </div>
+
+      <!-- Bàn phím số thiết kế riêng -->
+      <div class="keypad-container" aria-label="Bàn phím số">
+        <div class="keypad-grid">
+          <button type="button" class="keypad-btn" data-key="1">1</button>
+          <button type="button" class="keypad-btn" data-key="2">2</button>
+          <button type="button" class="keypad-btn" data-key="3">3</button>
+          <button type="button" class="keypad-btn" data-key="4">4</button>
+          <button type="button" class="keypad-btn" data-key="5">5</button>
+          <button type="button" class="keypad-btn" data-key="6">6</button>
+          <button type="button" class="keypad-btn" data-key="7">7</button>
+          <button type="button" class="keypad-btn" data-key="8">8</button>
+          <button type="button" class="keypad-btn" data-key="9">9</button>
+          <button type="button" class="keypad-btn action-key clear-key" id="btn-clear" title="Xóa tất cả" aria-label="Xóa tất cả">C</button>
+          <button type="button" class="keypad-btn" data-key="0">0</button>
+          <button type="button" class="keypad-btn action-key backspace-key" id="btn-backspace" title="Xóa một số" aria-label="Xóa một số">⌫</button>
+        </div>
+
+        <button type="button" class="submit-unlock-btn" id="btn-unlock">
+          <span class="unlock-icon">🔓</span>
+          <span class="unlock-text">Mở Khóa Món Quà</span>
+        </button>
+      </div>
+
+      <p class="hint-text">💡 Gợi ý: Ngày kỷ niệm đặc biệt của chúng mình (Hỗ trợ cả bàn phím máy tính)</p>
+    </div>
+  </section>
+
+  <!-- ==================== MÀN HÌNH 2: HỘP QUÀ 3D ==================== -->
+  <section id="gift-screen" class="screen-section" aria-label="Màn hình hộp quà 3D">
+    <div class="gift-stage-wrapper">
+      <div class="gift-whisper-title" id="gift-intro-text">
+        Anh có một điều muốn nói với em... 💌
+      </div>
+
+      <!-- Không gian hộp quà 3D thuần CSS -->
+      <div class="gift-box-wrapper" id="gift-box-interactive" role="button" tabindex="0" aria-label="Hộp quà tình yêu 3D, nhấn để mở">
+        <!-- Vòng hào quang phát sáng -->
+        <div class="gift-aura" id="gift-aura"></div>
+        <div class="gift-light-burst" id="gift-light-burst"></div>
+
+        <!-- Hộp quà 3D -->
+        <div class="gift-box-3d" id="gift-box-3d">
+          <!-- Nắp hộp quà -->
+          <div class="gift-lid-container" id="gift-lid">
+            <div class="gift-lid-top">
+              <!-- Nơ ruy băng phía trên nắp -->
+              <div class="bow-center"></div>
+              <div class="bow-loop bow-left"></div>
+              <div class="bow-loop bow-right"></div>
+              <div class="bow-ribbon-tail tail-left"></div>
+              <div class="bow-ribbon-tail tail-right"></div>
+              <div class="lid-ribbon-horizontal"></div>
+              <div class="lid-ribbon-vertical"></div>
+            </div>
+            <div class="gift-lid-lip front"></div>
+            <div class="gift-lid-lip back"></div>
+            <div class="gift-lid-lip left"></div>
+            <div class="gift-lid-lip right"></div>
+          </div>
+
+          <!-- Thân hộp quà 3D -->
+          <div class="gift-body-container" id="gift-body">
+            <div class="gift-inner-glow"></div>
+            <div class="gift-surprise-rising" id="gift-surprise" aria-hidden="true">💖</div>
+            <div class="gift-face face-front">
+              <div class="body-ribbon-vertical"></div>
+            </div>
+            <div class="gift-face face-back">
+              <div class="body-ribbon-vertical"></div>
+            </div>
+            <div class="gift-face face-left">
+              <div class="body-ribbon-vertical"></div>
+            </div>
+            <div class="gift-face face-right">
+              <div class="body-ribbon-vertical"></div>
+            </div>
+            <div class="gift-face face-bottom"></div>
+            <!-- Dải ruy băng ngang bao quanh thân -->
+            <div class="body-ribbon-horizontal"></div>
+          </div>
+
+          <!-- Bóng đổ mềm mại dưới hộp quà -->
+          <div class="gift-shadow"></div>
+        </div>
+
+        <!-- Các hạt trái tim và hoa lơ lửng quanh hộp -->
+        <div class="floating-orbit-decorations" aria-hidden="true">
+          <span class="orbit-item item-1">🌹</span>
+          <span class="orbit-item item-2">💖</span>
+          <span class="orbit-item item-3">✨</span>
+          <span class="orbit-item item-4">🌷</span>
+          <span class="orbit-item item-5">💕</span>
+          <span class="orbit-item item-6">⭐</span>
+        </div>
+      </div>
+
+      <!-- Nút mở quà chính -->
+      <div class="gift-action-container">
+        <button type="button" class="primary-magic-btn" id="btn-open-gift">
+          <span class="btn-sparkle">✨</span>
+          <span class="btn-label">MỞ QUÀ CỦA ANH 💝</span>
+          <span class="btn-sparkle">✨</span>
+        </button>
+        <p class="click-hint">Chạm vào hộp quà hoặc nút bên trên để mở</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MÀN HÌNH 3: BỨC THƯ TÌNH DÀNH CHO BẠN GÁI ==================== -->
+  <section id="letter-screen" class="screen-section" aria-label="Màn hình bức thư tình">
+    <div class="letter-layout-container">
+      
+      <!-- Bức thư chính phong cách sang trọng, viền hoa, màu kem -->
+      <article class="romantic-letter-card" id="letter-card">
+        <!-- Ruy băng / huy hiệu nhỏ trang trí trên cùng -->
+        <div class="letter-top-seal" aria-hidden="true">
+          <span class="seal-heart">💌</span>
+        </div>
+
+        <!-- Hoa văn góc lá & hoa hồng -->
+        <div class="letter-corner-ornament ornament-tl" aria-hidden="true">❦</div>
+        <div class="letter-corner-ornament ornament-tr" aria-hidden="true">❦</div>
+        <div class="letter-corner-ornament ornament-bl" aria-hidden="true">❦</div>
+        <div class="letter-corner-ornament ornament-br" aria-hidden="true">❦</div>
+
+        <!-- Dòng tiêu đề thư -->
+        <header class="letter-header">
+          <h2 class="letter-title" id="letter-title">💌 GỬI CÔ GÁI ANH THƯƠNG 💌</h2>
+          <p class="letter-subtitle" id="letter-subtitle">Có những điều anh muốn nói với em bằng cả trái tim...</p>
+          <div class="letter-divider">
+            <span class="divider-line"></span>
+            <span class="divider-icon">🌷 💗 🌷</span>
+            <span class="divider-line"></span>
+          </div>
+        </header>
+
+        <!-- Thân bức thư hiển thị hiệu ứng đánh máy -->
+        <div class="letter-body" id="letter-body-container">
+          <div id="letter-content" class="letter-text-content" aria-live="polite"></div>
+          <span class="typing-cursor" id="typing-cursor" aria-hidden="true">|</span>
+        </div>
+
+        <!-- Chữ ký người gửi -->
+        <footer class="letter-footer" id="letter-footer">
+          <div class="handwriting-quote" id="letter-quote">You are my favorite person 💗</div>
+          <div class="signature-box">
+            <span class="sign-label">Người gửi:</span>
+            <span class="sign-name" id="sender-display-name">Anh người yêu của em 💌</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Bó hoa trang trí bên cạnh thư trên desktop -->
+      <aside class="letter-side-bouquet" id="side-bouquet" aria-hidden="true">
+        <div class="bouquet-graphic">💐</div>
+        <div class="bouquet-caption">Dành tặng riêng em 🌹</div>
+      </aside>
+
+      <!-- Thanh công cụ tương tác sau khi mở thư -->
+      <nav class="letter-interaction-toolbar" aria-label="Các nút tương tác">
+        <button type="button" class="toolbar-btn heart-btn" id="btn-send-heart">
+          <span class="btn-icon">💖</span>
+          <span class="btn-text">Gửi anh một trái tim</span>
+        </button>
+
+        <button type="button" class="toolbar-btn flower-btn" id="btn-send-bouquet">
+          <span class="btn-icon">🌹</span>
+          <span class="btn-text">Tặng em thêm một bó hoa</span>
+        </button>
+
+        <button type="button" class="toolbar-btn replay-btn" id="btn-replay-letter">
+          <span class="btn-icon">💌</span>
+          <span class="btn-text">Đọc lại thư</span>
+        </button>
+      </nav>
+
+      <!-- Nút đặc biệt: Cổng dịch chuyển vào Không gian Vũ trụ đen & Ảnh người yêu -->
+      <div class="cosmic-portal-container" id="cosmic-portal-wrapper">
+        <button type="button" class="cosmic-portal-btn" id="btn-enter-universe" title="Khám phá không gian vũ trụ bí mật">
+          <span class="portal-sparkle">✨</span>
+          <span class="portal-text">Bước Vào Vũ Trụ Tình Yêu Của Chúng Mình 🌌</span>
+          <span class="portal-sparkle">✨</span>
+        </button>
+        <p class="portal-hint">Chạm vào đây để cùng anh đến một nơi đặc biệt dành riêng cho em 💫</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== MÀN HÌNH 4: KHÔNG GIAN VŨ TRỤ ĐEN & MƯA TIM ==================== -->
+  <section id="universe-screen" class="screen-section universe-section" aria-label="Không gian vũ trụ đen tình yêu">
+    <!-- Canvas riêng biệt cho vũ trụ: Sao băng, ngân hà, và mưa trái tim phát sáng neon -->
+    <canvas id="universe-canvas" class="universe-canvas" aria-hidden="true"></canvas>
+
+    <!-- Không gian nơi các bức ảnh người yêu rơi xuống cùng mưa tim và lặp đi lặp lại -->
+    <div id="falling-photos-stream" class="falling-photos-stream" aria-label="Dòng chảy ảnh kỷ niệm rơi lặp đi lặp lại"></div>
+
+    <div class="universe-content-wrapper">
+      <!-- Tiêu đề lãng mạn không gian vũ trụ -->
+      <header class="universe-header">
+        <div class="universe-badge">🌌 COSMIC LOVE REALM 💫</div>
+        <h2 class="universe-title">Vũ Trụ Của Riêng Hai Đứa Mình</h2>
+        <p class="universe-subtitle">
+          Giữa ngân hà rộng lớn với hàng tỷ vì sao, em chính là điều tuyệt vời và rực rỡ nhất trong cuộc đời anh 💖
+        </p>
+      </header>
+
+      <!-- Thanh công cụ điều khiển trên vũ trụ -->
+      <div class="universe-controls-bar">
+        <span class="gallery-count-badge" id="photos-count-badge">📸 Khoảnh khắc đáng yêu của em đang rơi</span>
+        
+        <div class="universe-action-group">
+          <button type="button" class="upload-photo-btn" id="btn-add-photos" title="Chọn ảnh từ thiết bị của bạn">
+            <span>📷</span> Thêm ảnh của em
+          </button>
+          <input type="file" id="photo-file-input" accept="image/*" multiple style="display: none;">
+
+          <button type="button" class="cosmic-action-btn rain-btn" id="btn-universe-rain-hearts">
+            <span>💖</span> Mưa Tim Bão Hòa
+          </button>
+
+          <button type="button" class="cosmic-action-btn back-btn" id="btn-back-to-letter">
+            <span>💌</span> Trở Về Bức Thư
+          </button>
+        </div>
+      </div>
+
+      <p class="falling-hint-text">✨ Chạm vào bất kỳ bức ảnh nào đang rơi để dừng lại và xem phóng to</p>
+    </div>
+  </section>
+
+  <!-- Lightbox xem ảnh kích thước lớn -->
+  <div id="photo-lightbox" class="photo-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+    <div class="lightbox-content">
+      <button type="button" class="lightbox-close-btn" id="lightbox-close" aria-label="Đóng ảnh">✕</button>
+      <img id="lightbox-img" class="lightbox-img" src="" alt="Ảnh kỷ niệm">
+      <p id="lightbox-caption" class="lightbox-caption"></p>
+    </div>
+  </div>
+
+  <!-- Script xử lý toàn bộ logic ứng dụng -->
+  <script src="script.js"></script>
+</body>
+</html>
